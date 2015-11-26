@@ -12,6 +12,22 @@
 #import <UIKit/UIKit.h>
 #endif
 
+void cheackAndReplaceNullRect(CALayer* layer);
+
+void cheackAndReplaceNullRect(CALayer* layer)
+{
+    if (CGRectIsInfinite(layer.bounds) ||
+        CGRectIsNull(layer.bounds) ||
+        CGRectIsEmpty(layer.bounds))
+    {
+        layer.frame = CGRectMake(0, 0, 0, 0);
+    }
+    for (CALayer *l in [layer sublayers])
+    {
+        cheackAndReplaceNullRect(l);
+    }
+}
+
 @implementation CALayerWithClipRender
 
 - (void)renderInContext:(CGContextRef)ctx {
@@ -22,6 +38,8 @@
         mask = [self.mask retain];
         self.mask = nil;
     }
+    
+    cheackAndReplaceNullRect(self);
     
     [super renderInContext:ctx];
     
